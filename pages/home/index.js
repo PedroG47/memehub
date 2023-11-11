@@ -1,11 +1,35 @@
+import request from "../../src/utils/request";
 import { UserCircle2 } from "lucide-react";
 import Page from "../../src/components/Page";
 import Link from "../../src/components/Link";
 import { Image, Box, Line, Paragraph } from "../../src/theme/components";
 import { theme } from "../../src/theme/theme";
-
+import { useEffect, useState } from "react";
+import formatDateAgo from "../../src/utils/convertData";
+import { tokenService } from "../../src/services/auth/tokenService";
 
 export default function Home(){
+    const [posts, setPosts] = useState({data: []})
+
+    const getPostData = async () =>{
+        const postsData = await request(`/api/post`)
+
+        if(postsData && postsData?.data){
+            const updatePosts = { ...postsData}
+            setPosts(updatePosts)
+        }
+    }
+
+    const logout = async () => {
+        window.location.href = '/'
+        tokenService.delete()
+    }
+
+    useEffect(() => {
+        getPostData()
+      }, []);
+      
+    
     return(
         <Page>
             <Box styleSheet={{
@@ -34,8 +58,9 @@ export default function Home(){
                 paddingRight: theme.space.x5,
                 paddingLeft: theme.space.x5,
             }}>
-                <Painel></Painel>
-                <Painel></Painel>
+                {posts.data.map((post, index) =>(
+                    <Painel post={post} key={index}></Painel>
+                ))}
 
             </Box>
 
@@ -55,14 +80,19 @@ export default function Home(){
                 <Link href="/create">
                     <Image width={32}  height={32} src="/images/add_circle.svg"/>
                 </Link>
-                <Image  width={32}  height={32} src="/images/account_circle.svg"/>
+                <Box onClick={logout}>
+                    <Image  width={32}  height={32} src="/images/account_circle.svg"/>
+                </Box>
             </Box>
             
         </Page>
     )
 }
 
-export function Painel(){
+export function Painel(post){
+    const postData = post.post 
+    const dataAgo = formatDateAgo(postData.createdOn)
+
     return(
         <Box styleSheet={{
             width: '100%',
@@ -90,13 +120,13 @@ export function Painel(){
                     <Paragraph styleSheet={{
                         marginBottom: 0
                     }}>
-                        Usuário
+                        {postData.ownerUsername}
                     </Paragraph>
                 </Box>
                 <Paragraph styleSheet={{
                     marginBottom: 0,
                     fontSize: theme.typography.variants.body4.fontSize
-                }}>10 min</Paragraph>
+                }}>{dataAgo}</Paragraph>
             </Box>
             <Box>
                 <Paragraph
@@ -107,7 +137,7 @@ export function Painel(){
                         color: theme.colors.palette.black,
                         marginBottom: theme.space.x2
                     }}
-                >Hoje eu tô só esse meme</Paragraph>
+                >{postData.title}</Paragraph>
             </Box>
             <Box styleSheet={{
                 height: 'auto',
@@ -115,7 +145,7 @@ export function Painel(){
                 borderRadius: theme.space.x5,
                 marginBottom: theme.space.x3
             }}>
-                <Image src="/images/meme1.png"></Image>
+                <Image src={`${postData.imageUrl}`}></Image>
             </Box>
             <Box styleSheet={{
                 marginLeft: theme.space.x6
@@ -133,7 +163,7 @@ export function Painel(){
                             marginBottom: 0,
                             marginRight: theme.space.x7
                         }}
-                    >49 gostaram</Paragraph>
+                    >{postData.ratingLike} gostaram</Paragraph>
                     <Image height={24} width={24} src="/images/thumb_down.svg"></Image>
                     <Paragraph
                         styleSheet={{
@@ -141,7 +171,7 @@ export function Painel(){
                             marginBottom: 0,
                             marginRight: theme.space.x7
                         }}
-                    >3 gostaram</Paragraph>
+                    >{postData.ratingLike} gostaram</Paragraph>
                 </Box>
                 <Paragraph 
                     styleSheet={{
@@ -149,7 +179,7 @@ export function Painel(){
                         color: theme.colors.palette.orange,
                         fontWeight: 400
                     }}
-                >Ver todos os 10 Comentários</Paragraph>
+                >{postData.commentCount < 1 ? 'Não tem comentários' :  `Ver todos os ${ postData.commentCount } Comentários` }</Paragraph>
             </Box>
         </Box>
     )

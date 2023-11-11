@@ -3,10 +3,55 @@ import { theme } from '../src/theme/theme';
 import { Image, Box, Text, Input, Button, Label, InputGroup, Paragraph } from '../src/theme/components';
 import Page from '../src/components/Page';
 import Link from '../src/components/Link';
+import { useEffect, useState } from 'react';
 
 const AUTH_LOGO = '/images/logo.svg';
 
 export default function RegisterPage(){
+
+    const [user, setUser] = useState('');
+    const [birthday, setBirthday] = useState(null)
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmedPassword, setConfirmedPassword] = useState('');
+    const [passwordsMatch, setPasswordsMatch] = useState(true);
+    const [passwordError, setPasswordError] = useState('');
+
+    const validatePassword = () => {
+        if (password.length < 6) {
+          setPasswordError('A senha deve conter no mínimo 6 caracteres');
+          return false;
+        }
+        setPasswordError('');
+        return true;
+    };
+
+    const equalPasswords = () => {
+        if(password === confirmedPassword){
+            setPasswordsMatch(true)
+        } else {
+            setPasswordsMatch(false)
+        }
+    }
+
+    const handleSubmit = (e) =>{
+        e.preventDefault();
+
+        const isPasswordValid = validatePassword();
+        const equalPassword = equalPasswords()
+
+        if(isPasswordValid && equalPassword){
+            
+        }
+
+        console.log('user:' + user)
+        console.log('birthday:' + birthday)
+        console.log('email:' + email)
+        console.log('password:' + password)
+        console.log('confirmedPassword:' + confirmedPassword)
+    
+    }
+
     return(
         <>
             <Head>
@@ -37,11 +82,14 @@ export default function RegisterPage(){
                             Preencha os dados e registre-se
                         </Paragraph>
 
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <InputGroup>
-                                <Label>Seu nome completo</Label>
+                                <Label>Seu nome de usuário</Label>
                                 <Input 
-                                    placeholder="Usuário 2" 
+                                    icon={'/images/alternate_email.svg'}
+                                    placeholder="usuariodois" 
+                                    value={user}
+                                    onChange={(e) => setUser(e.target.value)}
                                 />
                             </InputGroup>
 
@@ -50,14 +98,16 @@ export default function RegisterPage(){
                                 <Input 
                                     type="date"
                                     placeholder="05/05/2000" 
+                                    onChange={(e) => setBirthday(e.target.value)}
                                 />
                             </InputGroup>
 
                             <InputGroup>
-                                <Label>Seu nome de usuário</Label>
+                                <Label>Seu e-mail</Label>
                                 <Input 
-                                    icon={'/images/alternate_email.svg'}
-                                    placeholder="usuariodois" 
+                                    placeholder="nome@email.com" 
+                                    alue={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </InputGroup>
 
@@ -68,6 +118,8 @@ export default function RegisterPage(){
                                     icon={'/images/lock.svg'}
                                     type="password" 
                                     placeholder="********" 
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                             </InputGroup>
 
@@ -79,8 +131,14 @@ export default function RegisterPage(){
                                     icon={'/images/lock.svg'}
                                     type="password" 
                                     placeholder="********" 
+                                    value={confirmedPassword}
+                                    onChange={(e) => setConfirmedPassword(e.target.value)}
                                 />
                             </InputGroup>
+
+                            {!passwordsMatch && (
+                                <div style={{ color: 'red' }}>As senhas não coincidem.</div>
+                            )}
                             
                             <Button>REGISTRAR</Button>
                         </form>

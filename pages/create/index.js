@@ -3,10 +3,11 @@ import Page from "../../src/components/Page";
 import { Image, Box, Line, Paragraph, InputGroup, Label, Input, Text, Button } from "../../src/theme/components";
 import { theme } from "../../src/theme/theme";
 import Link from "../../src/components/Link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { storage } from "../../src/firebase";
 import { ref, uploadBytesResumable, getDownloadURL  } from "firebase/storage";
 import { v4 } from "uuid"
+import request from "../../src/utils/request";
 
 export default function Create(){
     const [image, setImage] = useState(null);
@@ -42,14 +43,22 @@ export default function Create(){
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                     setUrlImage(url)
-                    window.location.href ="/home"
                 });
             }
         )
-
-        // console.log(titleMeme)
-        // console.log(urlImage)
     };
+
+    useEffect(() => {
+        if (urlImage) {
+            console.log(urlImage)
+          const createPost = request(`/api/post`, 'post', {
+            title: titleMeme,
+            imageUrl: urlImage,
+          }).then(
+            window.location.href = '/home'
+          )
+        }
+      }, [urlImage]);
 
     const handleTitleChange = (e) => {
         const inputValue = e.target.value;
@@ -177,7 +186,8 @@ export default function Create(){
                                         padding: `${theme.space['x2.5']} ${theme.space.x7}` ,
                                         border: `1px solid ${theme.colors.palette.orange}`,
                                         borderRadius: theme.space.x12,
-                                        color: theme.colors.palette.orange
+                                        color: theme.colors.palette.orange,
+                                        cursor: 'pointer',
                                     }}>SELECIONAR FOTO</Label>
                                     <Input
                                         id="memeImage"
@@ -211,28 +221,3 @@ export default function Create(){
         </Page>
     )
 }
-
-export function ImageUpload({ onChange }) {
-    console.log(onChange)
-  
-    return (
-        <InputGroup>
-            <Label htmlFor="memeImage" styleSheet={{
-                padding: `${theme.space['x2.5']} ${theme.space.x7}` ,
-                border: `1px solid ${theme.colors.palette.orange}`,
-                borderRadius: theme.space.x12,
-                color: theme.colors.palette.orange
-            }}>SELECIONAR FOTO</Label>
-            <Input
-                id="memeImage"
-                type="file"
-                accept="image/*"
-                styleSheet={{
-                    display: 'none'
-                }}
-                onChange={onChange}
-            />
-        </InputGroup>
-        
-    );
-  };

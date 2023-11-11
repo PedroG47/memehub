@@ -1,13 +1,31 @@
+import { useEffect, useState } from 'react';
 import Head from 'next/head'
 import { theme } from '../src/theme/theme';
 import { Image, Box, Text, Input, Button, Label, InputGroup, Paragraph } from '../src/theme/components';
 import Page from '../src/components/Page'
 import Link from '../src/components/Link';
+import { authService } from '../src/services/auth/authService';
+import { useRouter } from 'next/router';
 
 const AUTH_LOGO = '/images/logo.svg';
 
-
 export default function HomePage(){
+
+const [email, setEmail] = useState('');
+const [password, setPassword] = useState('');
+const router = useRouter();
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    authService.login(email,password)
+    .then(() =>{
+        router.push('/home')
+    }).catch(() =>{
+        alert('Usuario ou a senha estão invalidos')
+    })
+};
+
     return(
         <>
             <Head>
@@ -38,11 +56,13 @@ export default function HomePage(){
                             Bem vindo! Faça seu login abaixo
                         </Paragraph>
 
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <InputGroup>
                                 <Label>E-mail</Label>
                                 <Input 
                                     placeholder="nome@email.com" 
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </InputGroup>
 
@@ -53,7 +73,10 @@ export default function HomePage(){
                                 <Input 
                                     type="password" 
                                     placeholder="********" 
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
+                                
                             </InputGroup>
                             <Paragraph styleSheet={{
                                 fontSize: theme.space.x3,
@@ -62,9 +85,7 @@ export default function HomePage(){
                                 textAlign: 'end',
                                 marginBottom: theme.space.x6
                             }}>Esqueceu a senha?</Paragraph>
-                            <Link href="/home">
                                 <Button>ENTRAR</Button>
-                            </Link>
 
                         </form>
                     </Box>
