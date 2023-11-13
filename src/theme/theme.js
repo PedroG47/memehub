@@ -114,6 +114,7 @@ export const theme = {
         palette: {
             yellow: '#FFBC00',
             orange: '#EF6400',
+            error: '#FF0000',
             black: '#000000'
         }
     },

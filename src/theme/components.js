@@ -611,10 +611,10 @@ export function Tab({ as, styleSheet, onChange, ...props }) {
     <Box as={tag} styleSheet={finalStyleSheet} onClick={onChange} {...props}>
       <Box styleSheet={{
         fontWeight: props.selected ? 500 : 'inherit',
-        color: props.selected ? theme.colors.primary[900] : 'inherit',
+        color: props.selected ? theme.colors.palette.orange : 'inherit',
         padding: '0 ' + theme.space.x2,
         paddingBottom: theme.space.x1,
-        borderBottom: props.selected ? theme.space['x1'] + ' solid ' + theme.colors.primary[900] : 'inherit'
+        borderBottom: props.selected ? theme.space['x0.5'] + ' solid ' + theme.colors.palette.orange : 'inherit'
       }}>{props.children}</Box>
     </Box>
   );

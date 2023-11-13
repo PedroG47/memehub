@@ -4,54 +4,119 @@ import { Image, Box, Text, Input, Button, Label, InputGroup, Paragraph } from '.
 import Page from '../src/components/Page';
 import Link from '../src/components/Link';
 import { useEffect, useState } from 'react';
+import request from '../src/utils/request';
 
 const AUTH_LOGO = '/images/logo.svg';
 
 export default function RegisterPage(){
+    const [user, setUser] = useState("")
+    const [email, setEmail] = useState("")
+    const [birthday, setBirthday] = useState("")
+    const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+    const [formError, setFormError] = useState({
+        user: "",
+        email: "",
+        birthday: "",
+        password: "",
+        confirmPassword: "",
+    })
 
-    const [user, setUser] = useState('');
-    const [birthday, setBirthday] = useState(null)
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmedPassword, setConfirmedPassword] = useState('');
-    const [passwordsMatch, setPasswordsMatch] = useState(true);
-    const [passwordError, setPasswordError] = useState('');
-
-    const validatePassword = () => {
-        if (password.length < 6) {
-          setPasswordError('A senha deve conter no mínimo 6 caracteres');
+    const validateFormInput = () => {
+        let inputError = {
+          user: "",
+          email: "",
+          birthday: "",
+          password: "",
+          confirmPassword: "",
+        };
+      
+        // Check if user, email, and password are empty
+        if (!user && !email && !password && !birthday) {
+          setFormError({
+            ...inputError,
+            user: "User should not be empty",
+            email: "Enter a valid email address",
+            birthday: "Birthday should not be empty",
+            password: "Password should not be empty",
+          });
           return false;
         }
-        setPasswordError('');
+      
+        if (!user) {
+          setFormError({
+            ...inputError,
+            user: "User should not be empty",
+          });
+          return false;
+        }
+      
+        // Check email is empty
+        if (!email) {
+          setFormError({
+            ...inputError,
+            email: "Enter a valid email address",
+          });
+          return false;
+        }
+
+        if (!birthday) {
+            setFormError({
+              ...inputError,
+              birthday: "Birthday should not be empty",
+            });
+            return false;
+        }
+      
+        // Check if password and confirm password match
+        if (confirmPassword !== password) {
+          setFormError({
+            ...inputError,
+            confirmPassword: "Password and confirm password should be the same",
+          });
+          return false;
+        }
+      
+        // Check if password is empty
+        if (!password) {
+          setFormError({
+            ...inputError,
+            password: "Password should not be empty",
+          });
+          return false;
+        }
+      
+        // Check if password has more than 6 characters
+        if (password.length < 6) {
+          setFormError({
+            ...inputError,
+            password: "Password should have at least 6 characters",
+          });
+          return false;
+        }
+      
+        setFormError(inputError);
+      
         return true;
-    };
+      };
 
-    const equalPasswords = () => {
-        if(password === confirmedPassword){
-            setPasswordsMatch(true)
-        } else {
-            setPasswordsMatch(false)
-        }
-    }
-
-    const handleSubmit = (e) =>{
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
-
-        const isPasswordValid = validatePassword();
-        const equalPassword = equalPasswords()
-
-        if(isPasswordValid && equalPassword){
-            
+      
+        const isFormValid = validateFormInput();
+        
+        if (isFormValid) {
+            const register = await request(`/api/user`, 'post', {
+                username: user,
+                email: email,
+                password: password,
+                birthday: birthday,
+            }).then(
+                window.location.href = '/login'
+              )
         }
-
-        console.log('user:' + user)
-        console.log('birthday:' + birthday)
-        console.log('email:' + email)
-        console.log('password:' + password)
-        console.log('confirmedPassword:' + confirmedPassword)
-    
     }
-
+    
     return(
         <>
             <Head>
@@ -69,20 +134,20 @@ export default function RegisterPage(){
                         }}>
                             <Image src={AUTH_LOGO} styleSheet={{
                                 height: '68px',
-                                marginBottom: theme.space.x10
+                                marginBottom: theme.space.x8
                             }}/>
                         </Box>
                         <Paragraph styleSheet={{
                             fontSize: theme.typography.variants.heading3.fontSize.xs,
                             fontWeight: 600,
                             color: theme.colors.neutral[900],
-                            marginBottom: theme.space.x8,
+                            marginBottom: theme.space.x6,
                             textAlign: 'center'
                         }}>
                             Preencha os dados e registre-se
                         </Paragraph>
 
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleFormSubmit}>
                             <InputGroup>
                                 <Label>Seu nome de usuário</Label>
                                 <Input 
@@ -91,8 +156,12 @@ export default function RegisterPage(){
                                     value={user}
                                     onChange={(e) => setUser(e.target.value)}
                                 />
+                                <Paragraph styleSheet={{
+                                    marginBottom: 0,
+                                    color: theme.colors.palette.error,
+                                    fontSize: theme.typography.variants.body4.fontSize
+                                }}>{formError.user}</Paragraph>
                             </InputGroup>
-
                             <InputGroup>
                                 <Label>Sua data de nascimento</Label>
                                 <Input 
@@ -100,15 +169,25 @@ export default function RegisterPage(){
                                     placeholder="05/05/2000" 
                                     onChange={(e) => setBirthday(e.target.value)}
                                 />
+                                <Paragraph styleSheet={{
+                                    marginBottom: 0,
+                                    color: theme.colors.palette.error,
+                                    fontSize: theme.typography.variants.body4.fontSize
+                                }}>{formError.birthday}</Paragraph>
                             </InputGroup>
 
                             <InputGroup>
                                 <Label>Seu e-mail</Label>
                                 <Input 
                                     placeholder="nome@email.com" 
-                                    alue={email}
+                                    value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
+                                <Paragraph styleSheet={{
+                                    marginBottom: 0,
+                                    color: theme.colors.palette.error,
+                                    fontSize: theme.typography.variants.body4.fontSize
+                                }}>{formError.email}</Paragraph>
                             </InputGroup>
 
                             <InputGroup styleSheet={{
@@ -121,6 +200,11 @@ export default function RegisterPage(){
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
+                                <Paragraph styleSheet={{
+                                    marginBottom: 0,
+                                    color: theme.colors.palette.error,
+                                    fontSize: theme.typography.variants.body4.fontSize
+                                }}>{formError.password}</Paragraph>
                             </InputGroup>
 
                             <InputGroup styleSheet={{
@@ -131,14 +215,15 @@ export default function RegisterPage(){
                                     icon={'/images/lock.svg'}
                                     type="password" 
                                     placeholder="********" 
-                                    value={confirmedPassword}
-                                    onChange={(e) => setConfirmedPassword(e.target.value)}
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
+                                <Paragraph styleSheet={{
+                                    marginBottom: 0,
+                                    color: theme.colors.palette.error,
+                                    fontSize: theme.typography.variants.body4.fontSize
+                                }}>{formError.confirmPassword}</Paragraph>
                             </InputGroup>
-
-                            {!passwordsMatch && (
-                                <div style={{ color: 'red' }}>As senhas não coincidem.</div>
-                            )}
                             
                             <Button>REGISTRAR</Button>
                         </form>

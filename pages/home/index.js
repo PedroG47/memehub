@@ -6,10 +6,11 @@ import { Image, Box, Line, Paragraph } from "../../src/theme/components";
 import { theme } from "../../src/theme/theme";
 import { useEffect, useState } from "react";
 import formatDateAgo from "../../src/utils/convertData";
-import { tokenService } from "../../src/services/auth/tokenService";
 
 export default function Home(){
     const [posts, setPosts] = useState({data: []})
+    const [user, setUser] = useState({})
+
 
     const getPostData = async () =>{
         const postsData = await request(`/api/post`)
@@ -19,17 +20,18 @@ export default function Home(){
             setPosts(updatePosts)
         }
     }
-
-    const logout = async () => {
-        window.location.href = '/'
-        tokenService.delete()
+    const getUser = async () =>{
+        let profile = await request(`/api/user/current/`, 'get');
+        if(profile){
+            setUser(profile.data);
+        }
     }
 
     useEffect(() => {
         getPostData()
-      }, []);
-      
-    
+        getUser()
+    }, []);
+
     return(
         <Page>
             <Box styleSheet={{
@@ -80,9 +82,9 @@ export default function Home(){
                 <Link href="/create">
                     <Image width={32}  height={32} src="/images/add_circle.svg"/>
                 </Link>
-                <Box onClick={logout}>
+                <Link href={`/profile/${user.id}`}>
                     <Image  width={32}  height={32} src="/images/account_circle.svg"/>
-                </Box>
+                </Link>
             </Box>
             
         </Page>
