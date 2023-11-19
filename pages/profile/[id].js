@@ -24,10 +24,6 @@ export default function Profile(){
         setDropdownVisible(!dropdownVisible);
     }
 
-    const handleEdit = () => {
-        console.log('a')
-    }
-
     const handleExit = () => {
         window.location.href = '/'
         tokenService.delete()
@@ -49,10 +45,6 @@ export default function Profile(){
             getUser()
         }
     }, [userId]);
-
-    useEffect(() => {
-        console.log(user)
-    }, [user]);
 
     return posts &&(
         <Page>
@@ -98,25 +90,26 @@ export default function Profile(){
                             paddingRight: theme.space['x2.5'],
                             boxShadow: `0 5px 10px -5px ${theme.colors.neutral[999]}43`
                         }}>
-                            <Box 
-                                onClick={handleEdit} 
-                                styleSheet={{
-                                    paddingBottom: theme.space.x2,
-                                    borderBottom: '1px solid rgba(232, 232, 232, 1)',
-                                    marginBottom: theme.space.x2,
-                                    cursor: 'pointer',
-                                    hover: {
-                                        opacity: '.8',
-                                    },
-                                }}
-                            >
-                                <Paragraph 
+                            <Link  href="/profile/edit">
+                                <Box
                                     styleSheet={{
-                                        marginBottom: 0,
-                                        fontSize: theme.typography.variants.body3.fontSize,
-                                        fontWeight: 400
-                                    }}>Editar</Paragraph>
-                            </Box>
+                                        paddingBottom: theme.space.x2,
+                                        borderBottom: '1px solid rgba(232, 232, 232, 1)',
+                                        marginBottom: theme.space.x2,
+                                        cursor: 'pointer',
+                                        hover: {
+                                            opacity: '.8',
+                                        },
+                                    }}
+                                >
+                                    <Paragraph 
+                                        styleSheet={{
+                                            marginBottom: 0,
+                                            fontSize: theme.typography.variants.body3.fontSize,
+                                            fontWeight: 400
+                                        }}>Editar</Paragraph>
+                                </Box>
+                            </Link>
                             <Box 
                                 onClick={handleExit}
                                 styleSheet={{

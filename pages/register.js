@@ -9,6 +9,7 @@ import request from '../src/utils/request';
 const AUTH_LOGO = '/images/logo.svg';
 
 export default function RegisterPage(){
+    const [checkUser, setCheckUser] = useState(false)
     const [user, setUser] = useState("")
     const [email, setEmail] = useState("")
     const [birthday, setBirthday] = useState("")
@@ -87,10 +88,10 @@ export default function RegisterPage(){
         }
       
         // Check if password has more than 6 characters
-        if (password.length < 6) {
+        if (password.length < 8) {
           setFormError({
             ...inputError,
-            password: "Password should have at least 6 characters",
+            password: "Password should have at least 8 characters",
           });
           return false;
         }
@@ -106,6 +107,7 @@ export default function RegisterPage(){
         const isFormValid = validateFormInput();
         
         if (isFormValid) {
+            setCheckUser(true)
             const register = await request(`/api/user`, 'post', {
                 username: user,
                 email: email,
@@ -225,7 +227,7 @@ export default function RegisterPage(){
                                 }}>{formError.confirmPassword}</Paragraph>
                             </InputGroup>
                             
-                            <Button>REGISTRAR</Button>
+                            <Button>{!checkUser ? 'REGISTRAR' : 'REGISTRANDO...'}</Button>
                         </form>
                     </Box>
                     <Paragraph 

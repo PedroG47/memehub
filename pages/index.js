@@ -13,6 +13,7 @@ export default function HomePage(){
 
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
+const [checkUser, setCheckUser] = useState(false)
 const router = useRouter();
 
 const handleSubmit = async (e) => {
@@ -20,6 +21,7 @@ const handleSubmit = async (e) => {
 
     authService.login(email,password)
     .then(() =>{
+        setCheckUser(true)
         router.push('/home')
     }).catch(() =>{
         alert('Usuario ou a senha estão invalidos')
@@ -85,7 +87,7 @@ const handleSubmit = async (e) => {
                                 textAlign: 'end',
                                 marginBottom: theme.space.x6
                             }}>Esqueceu a senha?</Paragraph>
-                                <Button>ENTRAR</Button>
+                                <Button>{!checkUser ? 'ENTRAR' : 'ENTRANDO...'}</Button>
 
                         </form>
                     </Box>

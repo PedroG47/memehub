@@ -142,12 +142,16 @@ export function Painel(post){
                 >{postData.title}</Paragraph>
             </Box>
             <Box styleSheet={{
+                display: 'flex',
+                justifyContent: 'center',
                 height: 'auto',
                 width: 'auto',
-                borderRadius: theme.space.x5,
-                marginBottom: theme.space.x3
+                borderRadius: `${theme.space.x5} ${theme.space.x5} 0 0`,
+                marginBottom: theme.space.x3,
+                backgroundColor: '#171518',
+                overflow: 'auto'
             }}>
-                <Image src={`${postData.imageUrl}`}></Image>
+                <Image src={`${postData.imageUrl}`}/>
             </Box>
             <Box styleSheet={{
                 marginLeft: theme.space.x6

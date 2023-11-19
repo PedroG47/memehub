@@ -28,6 +28,8 @@ export default async function request(url, method, params) {
     let response;
     if (method === 'post') {
       response = await axios.post(path, params, authorization);
+    } else if (method === 'put'){
+      response = await axios.put(path, params, authorization);
     } else {
       response = await axios.get(path, authorization);
     }
