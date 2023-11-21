@@ -36,7 +36,7 @@ export default function Home(){
        console.log(posts)
     }, [posts]);
 
-    return(
+    return user &&(
         <Page>
             <Box styleSheet={{
                 display: 'flex',

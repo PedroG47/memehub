@@ -10,8 +10,8 @@ import request from "../../src/utils/request";
 
 export default function Profile(){
     const [user, setUser] = useState(null)
-    const [posts, setPosts] = useState(null)
-    const [likes, setLikes] = useState(null)
+    const [posts, setPosts] = useState([])
+    const [likes, setLikes] = useState([])
     const [profileTab, setProfileTab] = useState('posts');
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const router = useRouter();
@@ -36,7 +36,7 @@ export default function Profile(){
     }
 
     const getLikes = async () =>{
-        let likesData = await request(`/api/rating/user/${userId}`, 'get')
+        let likesData = await request(`/api/post/current/likes`, 'get')
         setLikes(likesData.data)
     }
 
@@ -52,20 +52,6 @@ export default function Profile(){
             getUser()
         }
     }, [userId]);
-
-    // useEffect(() => {
-    //     console.log(user)
-    // }, [user]);
-
-    // useEffect(() => {
-    //     console.log(posts)
-    // }, [posts]);
-
-    useEffect(() => {
-        console.log(likes)
-    }, [likes]);
-
-
 
     return user && posts && likes && (
         <Page>
