@@ -11,6 +11,7 @@ import request from "../../src/utils/request";
 export default function Profile(){
     const [user, setUser] = useState(null)
     const [posts, setPosts] = useState(null)
+    const [likes, setLikes] = useState(null)
     const [profileTab, setProfileTab] = useState('posts');
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const router = useRouter();
@@ -34,6 +35,11 @@ export default function Profile(){
         setPosts(postsData.data);
     }
 
+    const getLikes = async () =>{
+        let likesData = await request(`/api/rating/user/${userId}`, 'get')
+        setLikes(likesData.data)
+    }
+
     const getUser = async () => {
         let userData = await request(`/api/user/${userId}`, 'get');
         setUser(userData.data);
@@ -42,11 +48,26 @@ export default function Profile(){
     useEffect(() => {
         if(userId){
             getPosts()
+            getLikes()
             getUser()
         }
     }, [userId]);
 
-    return posts &&(
+    // useEffect(() => {
+    //     console.log(user)
+    // }, [user]);
+
+    // useEffect(() => {
+    //     console.log(posts)
+    // }, [posts]);
+
+    useEffect(() => {
+        console.log(likes)
+    }, [likes]);
+
+
+
+    return user && posts && likes && (
         <Page>
             <Box styleSheet={{
                 display: 'flex',
@@ -167,7 +188,9 @@ export default function Profile(){
                                 marginBottom: 0,
                                 fontSize: theme.typography.variants.body1.fontSize,
                                 fontWeight: 700
-                            }}>100</Paragraph>
+                            }}>
+                                {likes.length}
+                            </Paragraph>
                             <Paragraph styleSheet={{
                                 marginBottom: 0,
                                 fontSize: theme.typography.variants.body3.fontSize,
@@ -200,7 +223,19 @@ export default function Profile(){
                         })}
                     </Box>
                 )}
-                {profileTab === 'likes' && <p>Likes content goes here</p>}
+                {profileTab === 'likes' && (
+                     <Box styleSheet={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '20px 13px',
+                    }}>
+                        {likes && likes.map((like, index) => {
+                            return (
+                                <PreviewLikes like={like} key={index}></PreviewLikes>
+                            )
+                        })}
+                    </Box>
+                )}
                 
             </Box>
 
@@ -235,6 +270,18 @@ export function Preview(post, key){
                 height: '189px',
                 borderRadius: theme.space['x2.5'],
             }} src={post.post.imageUrl} title={post.post.title}></Image>
+        </Box>
+    )
+}
+
+export function PreviewLikes(like, key){
+    return(
+        <Box key={key}>
+            <Image styleSheet={{
+                width: '189px',
+                height: '189px',
+                borderRadius: theme.space['x2.5'],
+            }} src={like.like.url}></Image>
         </Box>
     )
 }
