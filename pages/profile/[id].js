@@ -267,7 +267,7 @@ export function PreviewLikes(like, key){
                 width: '189px',
                 height: '189px',
                 borderRadius: theme.space['x2.5'],
-            }} src={like.like.url}></Image>
+            }} src={like.like.imageUrl}></Image>
         </Box>
     )
 }
