@@ -51,8 +51,8 @@ export default function EditPage(){
       
         try {
           const response = await request(`/api/user/${user.id}`, 'put', updatedFields).then(
-            window.location.href = `/profile/${user.id}`
-          );
+             window.location.href = `/profile/${user.id}`
+          )
             
           setNewUsername('');
           setNewEmail('');

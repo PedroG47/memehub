@@ -108,14 +108,16 @@ export default function RegisterPage(){
         
         if (isFormValid) {
             setCheckUser(true)
-            const register = await request(`/api/user`, 'post', {
+            const response = await request(`/api/user`, 'post', {
                 username: user,
                 email: email,
                 password: password,
                 birthday: birthday,
-            }).then(
-                window.location.href = '/login'
-              )
+            });
+    
+            if (response.data) {
+                window.location.href = '/login';
+            }
         }
     }
     

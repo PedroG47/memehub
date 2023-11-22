@@ -32,10 +32,6 @@ export default function Home(){
         getUser()
     }, []);
 
-    useEffect(() => {
-       console.log(posts)
-    }, [posts]);
-
     return user &&(
         <Page>
             <Box styleSheet={{
@@ -98,7 +94,6 @@ export default function Home(){
 export function Painel(post){
     const postData = post.post 
     const dataAgo = formatDateAgo(postData.createdOn)
-    console.log(postData)
 
     return(
         <Box styleSheet={{
