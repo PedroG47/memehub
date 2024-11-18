@@ -18,7 +18,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "axios": "^1.6.0",
     "date-fns": "^2.30.0",
-    "firebase": "^10.5.2",
+    "firebase": "^10.9.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.290.0",
     "next": "^14.1.1",
