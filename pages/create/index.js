@@ -50,13 +50,14 @@ export default function Create(){
 
     useEffect(() => {
         if (urlImage) {
-            console.log(urlImage)
           const createPost = request(`/api/post`, 'post', {
             title: titleMeme,
             imageUrl: urlImage,
-          }).then(
-            window.location.href = '/home'
-          )
+          }).then(() => {
+            setTimeout(() => {
+                window.location.href = '/home';
+            }, 2000);
+        });
         }
       }, [urlImage]);
 
